@@ -1,0 +1,2 @@
+# stockManager
+Android uni project
