@@ -1,5 +1,3 @@
-// components/Header.js
-// components/Header.tsx
 import React from 'react';
 import { View, Text, Image,ImageSourcePropType } from 'react-native';
 import CustomHeaderStyles from './CustomHeaderStyle/CustomHeaderStyle';
@@ -9,7 +7,7 @@ interface HeaderProps {
   imageSource?: ImageSourcePropType;
 }
 
-const CustomHeader: React.FC<HeaderProps> = ({ title, imageSource }) => {
+const CustomHeader: React.FC<HeaderProps> = ({ title, imageSource,  }) => {
   return (
     <View style={CustomHeaderStyles.headerContainer}>
       {imageSource && (

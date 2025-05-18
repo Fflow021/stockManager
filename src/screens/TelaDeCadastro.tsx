@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Button, StyleSheet, Alert, ScrollView, Text } from 'react-native';
 import CustomTextField from '../components/button/textField/CustomTextField';
+import CustomHeader from '../components/button/header/CustomHeader';
 
 export default function TelaDeCadastro() {
   const [nome, setNome] = useState<string>('');
@@ -35,78 +36,94 @@ export default function TelaDeCadastro() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <CustomTextField
-        label="Nome:"
-        value={nome}
-        onChangeText={setNome}
-        placeholder="Digite o nome"
-      />
+    <View style={styles.wrapper}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <CustomTextField
+          label="Nome:"
+          value={nome}
+          onChangeText={setNome}
+          placeholder="Digite o nome"
+        />
 
-      <CustomTextField
-        label="Quantidade:"
-        value={quantidade}
-        onChangeText={setQuantidade}
-        placeholder="Digite a quantidade"
-        keyboardType="numeric"
-      />
-      {!quantidadeValida && quantidade.length > 0 && (
-        <Text style={styles.errorText}>
-          Insira apenas números inteiros.
-        </Text>
-      )}
+        <CustomTextField
+          label="Quantidade:"
+          value={quantidade}
+          onChangeText={setQuantidade}
+          placeholder="Digite a quantidade"
+          keyboardType="numeric"
+        />
+        {!quantidadeValida && quantidade.length > 0 && (
+          <Text style={styles.errorText}>
+            Insira apenas números inteiros.
+          </Text>
+        )}
 
-      <CustomTextField
-        label="Preço de Compra:"
-        value={precoCompra}
-        onChangeText={setPrecoCompra}
-        placeholder="Digite o preço"
-        keyboardType="decimal-pad"
-      />
-      {!precoValido && precoCompra.length > 0 && (
-        <Text style={styles.errorText}>
-          Insira somente número, com ponto ou vírgula para decimais.
-        </Text>
-      )}
+        <CustomTextField
+          label="Preço de Compra:"
+          value={precoCompra}
+          onChangeText={setPrecoCompra}
+          placeholder="Digite o preço"
+          keyboardType="decimal-pad"
+        />
+        {!precoValido && precoCompra.length > 0 && (
+          <Text style={styles.errorText}>
+            Insira somente número, com ponto ou vírgula para decimais.
+          </Text>
+        )}
 
-      <CustomTextField
-        label="Descrição:"
-        placeholder="Digite a descrição"
-        value={descricao}
-        onChangeText={setDescricao}
-      />
+        <CustomTextField
+          label="Descrição:"
+          placeholder="Digite a descrição"
+          value={descricao}
+          onChangeText={setDescricao}
+        />
 
-      <CustomTextField
-        label="Código:"
-        placeholder="Digite o código"
-        value={codigo}
-        onChangeText={setCodigo}
-      />
+        <CustomTextField
+          label="Código:"
+          placeholder="Digite o código"
+          value={codigo}
+          onChangeText={setCodigo}
+        />
 
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Salvar"
-          onPress={salvar}
-          color="#502f5a"
-          disabled={!quantidadeValida || !precoValido}
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Salvar"
+            onPress={salvar}
+            color="#502f5a"
+            disabled={!quantidadeValida || !precoValido}
+          />
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <CustomHeader
+          title="Entrada de itens no estoque"
+          imageSource={require('../../assets/eitaSorveteAcaiLanchesLOGO.jpg')}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     padding: 20,
-    paddingBottom: 40,
-    backgroundColor: '#fff',
+    paddingBottom: 100,
+  },
+  buttonContainer: {
+    marginTop: 24,
   },
   errorText: {
     color: 'red',
     marginTop: 4,
     marginBottom: 8,
   },
-  buttonContainer: {
-    marginTop: 24,
+  footer: {
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#ccc',
   },
 });
