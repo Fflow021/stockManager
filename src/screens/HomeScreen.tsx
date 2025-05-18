@@ -1,32 +1,32 @@
 import { StyleSheet, View} from 'react-native';
-import CustomButton from './components/button/CustomButton';
-import buttonStyle from './styles/CustomButtonStyle/ButtonStyle';
-import CustomHeader from './components/button/header/CustomHeader';
+import CustomButton from '../components/button/CustomButton';
+import buttonStyle from '../styles/CustomButtonStyle/ButtonStyle';
+import CustomHeader from '../components/button/header/CustomHeader';
 
-export default function App() {
+export default function HomeScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <CustomHeader 
       title='Gerenciador de Estoque da Eita Sorvete Açaí Lanches'
-      imageSource={require('../assets/eitaSorveteAcaiLanchesLOGO.jpg')} />
+      imageSource={require('../../assets/eitaSorveteAcaiLanchesLOGO.jpg')} />
 
       <View style={buttonStyle.CustomButtonView}>
         <CustomButton 
           title='Cadastro de Itens'
-          onPress={() => alert('Funcionou 1')}
+          onPress={() => navigation.navigate('Cadastro')}
           
         />
       </View>
       <View style={buttonStyle.CustomButtonView}>
         <CustomButton
           title='Visualizar Estoque'
-          onPress={() => alert('Funcionou 2')}
+          onPress={() => navigation.navigate('Estoque')}
         />
       </View>
       <View style={buttonStyle.CustomButtonView}>
         <CustomButton
           title='Gerar Relatório'
-          onPress={() => alert('Funcionou 3')}
+          onPress={() => navigation.navigate('Relatorio')}
         />
       </View>
     </View>
