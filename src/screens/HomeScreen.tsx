@@ -1,6 +1,6 @@
 import { StyleSheet, View} from 'react-native';
 import CustomButton from '../components/button/CustomButton';
-import buttonStyle from '../styles/CustomButtonStyle/ButtonStyle';
+import buttonStyle from '../components/button/CustomButtonStyle/ButtonStyle';
 import CustomHeader from '../components/button/header/CustomHeader';
 
 export default function HomeScreen({navigation}: any) {
