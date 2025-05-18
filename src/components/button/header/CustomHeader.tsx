@@ -2,7 +2,7 @@
 // components/Header.tsx
 import React from 'react';
 import { View, Text, Image,ImageSourcePropType } from 'react-native';
-import CustomHeaderStyles from '../../../styles/CustomButtonStyle/CustomHeaderStyle';
+import CustomHeaderStyles from '../../../styles/CustomHeaderStyle/CustomHeaderStyle';
 
 interface HeaderProps {
   title: string;
