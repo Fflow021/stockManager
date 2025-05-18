@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, ViewStyle, TextStyle } from 'react-native';
+import buttonStyles from '../../styles/CustomButtonStyle/ButtonStyle';
 
 interface CustomButtonProps {
   title: string;
@@ -33,7 +34,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#efbd10',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 });
 

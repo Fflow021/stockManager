@@ -1,26 +1,32 @@
 import { StyleSheet, View} from 'react-native';
 import CustomButton from './components/button/CustomButton';
+import buttonStyle from './styles/CustomButtonStyle/ButtonStyle';
+import CustomHeader from './components/button/header/CustomHeader';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <CustomButton
-        title='Botao 1'
-        onPress={() => alert('Funcionou')}
-        style={{ backgroundColor: '#28a745', borderRadius: 20 }}
-      />
-      <CustomButton
-        title='Botao 2'
-        onPress={() => alert('Funcionou 2')}
-      />
-      <CustomButton
-        title='Botao 3'
-        onPress={() => alert('Funcionou 3')}
-      />
-      <View style={{padding:5}}>
+      <CustomHeader 
+      title='Gerenciador de Estoque da Eita Sorvete Açaí Lanches'
+      imageSource={require('../assets/eitaSorveteAcaiLanchesLOGO.jpg')} />
+
+      <View style={buttonStyle.CustomButtonView}>
+        <CustomButton 
+          title='Cadastro de Itens'
+          onPress={() => alert('Funcionou 1')}
+          
+        />
+      </View>
+      <View style={buttonStyle.CustomButtonView}>
         <CustomButton
-          title='Botao 4'
-          onPress={() => alert('Funcionou 4')}
+          title='Visualizar Estoque'
+          onPress={() => alert('Funcionou 2')}
+        />
+      </View>
+      <View style={buttonStyle.CustomButtonView}>
+        <CustomButton
+          title='Gerar Relatório'
+          onPress={() => alert('Funcionou 3')}
         />
       </View>
     </View>
@@ -31,7 +37,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
