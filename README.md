@@ -1,8 +1,29 @@
 # Gerenciador de Estoque Eita Sorvete Açaí Lanches
+
 Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenciador de Estoque Eita Sorvete Açaí Lanches", desenvolvido utilizando React Native. O aplicativo tem como objetivo facilitar o gerenciamento de estoque da empresa, oferecendo funcionalidades para cadastro de itens, visualização do estoque atual e geração de relatórios.
 
+## Como dar run no projeto
+
+No terminal do projeto use o comando:
+
+```bash
+npx expo start
+```
+
+# Android Studio
+
+no Android Studio selecione o seu dispositivo para emular e use a opção
+
+```bash
+a
+```
+
+para iniciar o Expo no android emulado.
+
 ## 1. Arquivo: App.js
+
 Este é o ponto de entrada principal do aplicativo.
+
 ```JavaScript
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,6 +39,7 @@ export default function App() {
 ```
 
 ### Descrição:
+
 Importa as bibliotecas React, NavigationContainer do @react-navigation/native e o componente AppNavigator do arquivo ./src/navigation/AppNavigator.
 
 O componente funcional App é o componente raiz do aplicativo.
@@ -25,11 +47,15 @@ O componente funcional App é o componente raiz do aplicativo.
 NavigationContainer é um componente fornecido pelo React Navigation que envolve todo o sistema de navegação do aplicativo. Ele gerencia o estado de navegação e fornece o contexto necessário para os navegadores e rotas.
 
 O componente AppNavigator (definido em ./src/navigation/AppNavigator) é renderizado dentro do NavigationContainer. Ele configura as rotas de navegação do aplicativo.
+
 ### Responsabilidades:
+
 Servir como o componente inicial que envolve toda a estrutura de navegação do aplicativo.
 Inicializar o ambiente de navegação do React Navigation.
 Renderizar o componente responsável por definir as rotas do aplicativo (AppNavigator).
+
 ## 2. Arquivo: src/navigation/AppNavigator.js
+
 Este arquivo define o navegador principal do aplicativo, utilizando um createNativeStackNavigator para gerenciar as diferentes telas.
 
 ```JavaScript
@@ -53,7 +79,9 @@ export default function AppNavigator() {
   );
 }
 ```
+
 ### Descrição:
+
 Importa as bibliotecas React e createNativeStackNavigator do @react-navigation/native-stack. Também importa os componentes de tela: HomeScreen, TelaDeCadastro, TelaDeEstoque e TelaDeRelatorio dos seus respectivos arquivos.
 
 createNativeStackNavigator() cria um navegador de pilha que utiliza as APIs nativas para proporcionar uma melhor performance e experiência do usuário.
@@ -63,11 +91,15 @@ Cada Stack.Screen define uma tela individual:
 name: O nome da rota, usado para navegar para esta tela.
 component: O componente React a ser renderizado quando esta rota é acessada.
 options: Um objeto para configurar a aparência da tela. No caso da tela "Home", headerShown: false oculta o cabeçalho padrão.
+
 ### Responsabilidades:
+
 Definir a estrutura de navegação principal do aplicativo utilizando um navegador de pilha.
 Mapear cada rota a um componente de tela específico.
 Configurar opções de visualização para cada tela (como a exibição do cabeçalho).
+
 ## 3. Arquivo: src/screens/HomeScreen.js
+
 Esta tela é a tela inicial do aplicativo, apresentando botões para acessar as outras funcionalidades.
 
 ```JavaScript
@@ -113,7 +145,9 @@ const styles = StyleSheet.create({
   },
 });
 ```
+
 ### Descrição:
+
 Importa as bibliotecas StyleSheet e View do react-native. Também importa os componentes customizados CustomButton e CustomHeader, e o estilo buttonStyle.
 O componente funcional HomeScreen recebe o objeto navigation como uma prop, que é fornecido pelo React Navigation.
 Renderiza um View como container principal.
@@ -122,11 +156,15 @@ Utiliza o componente CustomButton para criar três botões: "Cadastro de Itens",
 A propriedade onPress de cada botão define a ação a ser executada quando o botão é pressionado. Nesse caso, navigation.navigate() é usado para navegar para a tela correspondente (Cadastro, Estoque ou Relatorio).
 O estilo buttonStyle.CustomButtonView é aplicado aos containers dos botões para definir seu layout.
 Define um StyleSheet para estilizar o container principal da tela.
+
 ### Responsabilidades:
+
 Apresentar a tela inicial do aplicativo com as principais funcionalidades.
 Permitir a navegação para as outras telas do aplicativo através dos botões.
 Exibir o cabeçalho personalizado com o título e a logo do aplicativo.
+
 ## 4. Arquivo: src/screens/TelaDeCadastro.js
+
 Esta tela representa a funcionalidade de cadastro de novos itens no estoque.
 
 ```JavaScript
@@ -260,7 +298,9 @@ const styles = StyleSheet.create({
   },
 });
 ```
+
 ### Descrição:
+
 Importa as bibliotecas React, useState, View, Button, StyleSheet, Alert, ScrollView e Text do react-native. Também importa os componentes customizados CustomTextField e CustomHeader.
 
 Utiliza useState hooks para gerenciar os estados dos campos de entrada: nome, quantidade, precoCompra, descricao e codigo.
@@ -273,6 +313,7 @@ Cria um objeto dados contendo os valores dos campos de entrada. A quantidade é 
 Exibe os dados cadastrados no console e mostra um Alert de sucesso.
 
 A renderização do componente inclui:
+
 1. Um ScrollView para permitir a rolagem da tela caso o conteúdo não caiba na tela.
 2. Múltiplos componentes CustomTextField para cada campo de entrada (Nome, Quantidade, Preço de Compra, Descrição e Código). Cada CustomTextField recebe um label, o value do estado correspondente, a função onChangeText para atualizar o estado e um placeholder. O keyboardType é definido como numeric para o campo de quantidade e decimal-pad para o campo de preço.
 3. Exibe mensagens de erro (Text com estilo errorText) caso os campos de quantidade ou preço sejam inválidos e tenham algum valor digitado.
@@ -280,10 +321,30 @@ A renderização do componente inclui:
 5. Um View com estilos para o container do botão.
 6. Um View para o footer que contém um CustomHeader com o título "Entrada de itens no estoque" e a logo da empresa.
 7. Define um StyleSheet para estilizar os diversos elementos da tela, incluindo o wrapper, container, container do botão, texto de erro e footer.
+
 ### Responsabilidades:
+
 Apresentar um formulário para o usuário inserir os detalhes de um novo item de estoque.
 Gerenciar o estado de cada campo de entrada.
 Validar a entrada dos campos de quantidade e preço.
 Salvar os dados do item cadastrado (atualmente apenas log no console e um alerta de sucesso).
 Exibir feedback visual para erros de validação.
 Mostrar um cabeçalho personalizado na parte inferior da tela.
+
+## Usando o Prettier
+
+```bash
+npx prettier --write .
+```
+
+# Em um arquivo específico
+
+```bash
+npx prettier --write src/App.js
+```
+
+# Ver quais arquivos vão ser formatados
+
+```bash
+npx prettier --check .
+```

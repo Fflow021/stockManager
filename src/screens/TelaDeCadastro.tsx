@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, Alert, ScrollView, Text } from 'react-native';
+import {
+  View,
+  Button,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  Text,
+} from 'react-native';
 import CustomTextField from '../components/button/textField/CustomTextField';
 import CustomHeader from '../components/button/header/CustomHeader';
 
@@ -15,11 +22,17 @@ export default function TelaDeCadastro() {
 
   const salvar = () => {
     if (!quantidadeValida) {
-      Alert.alert('Erro', 'Quantidade inválida. Insira somente números inteiros.');
+      Alert.alert(
+        'Erro',
+        'Quantidade inválida. Insira somente números inteiros.',
+      );
       return;
     }
     if (!precoValido) {
-      Alert.alert('Erro', 'Preço inválido. Insira um valor numérico, com opcional decimal.');
+      Alert.alert(
+        'Erro',
+        'Preço inválido. Insira um valor numérico com decimal.',
+      );
       return;
     }
 
@@ -53,9 +66,7 @@ export default function TelaDeCadastro() {
           keyboardType="numeric"
         />
         {!quantidadeValida && quantidade.length > 0 && (
-          <Text style={styles.errorText}>
-            Insira apenas números inteiros.
-          </Text>
+          <Text style={styles.errorText}>Insira apenas números inteiros.</Text>
         )}
 
         <CustomTextField
