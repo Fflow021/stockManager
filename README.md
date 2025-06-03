@@ -3,7 +3,7 @@
 Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenciador de Estoque Eita Sorvete Açaí Lanches", desenvolvido utilizando React Native. O aplicativo tem como objetivo facilitar o gerenciamento de estoque da empresa, oferecendo funcionalidades para cadastro de itens, visualização do estoque atual e geração de relatórios.
 
 ## Tecnologias Utilizadas
-- 18.3.1
+- React 18.3.1
 - React-native 0.76.9
 - Expo 52.0.46
 - Roteamento: React Navigation
