@@ -2,63 +2,61 @@
 
 Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenciador de Estoque Eita Sorvete Açaí Lanches", desenvolvido utilizando React Native. O aplicativo tem como objetivo facilitar o gerenciamento de estoque da empresa, oferecendo funcionalidades para cadastro de itens, visualização do estoque atual e geração de relatórios.
 
-## Como dar run no projeto
+## Tecnologias Utilizadas
+- 18.3.1
+- React-native 0.76.9
+- Expo 52.0.46
+- Roteamento: React Navigation
+- Estilos: React Native Paper
+- SQLite: Banco de dados
+- Padronização e Qualidade: Prettier
+- Testes: Jest
+- Gemini AI: Documentação
 
-No terminal do projeto use o comando:
-
+## Instalação e execução do projeto
+### Instalar as dependências
+```bash
+npm i
+```
+### Inicializar o Expo
 ```bash
 npx expo start
 ```
+### Android Studio
+No Android Studio selecione o seu dispositivo para emular e volte no terminal que tinha sido aberto com o `npx expo start` e use a opção `a`,
+para iniciar a aplicação no android emulado.
 
-# Android Studio
-
-no Android Studio selecione o seu dispositivo para emular e use a opção
-
-```bash
-a
-```
-
-para iniciar o Expo no android emulado.
-
-## 1. Arquivo: App.js
+## 1. App.tsx
 
 Este é o ponto de entrada principal do aplicativo.
 
-```JavaScript
+```typescript
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
+import { PaperProvider } from 'react-native-paper';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <AppNavigator />
+      <PaperProvider>
+        <AppNavigator />
+      </PaperProvider>
     </NavigationContainer>
   );
 }
 ```
 
 ### Descrição:
-
-Importa as bibliotecas React, NavigationContainer do @react-navigation/native e o componente AppNavigator do arquivo ./src/navigation/AppNavigator.
-
-O componente funcional App é o componente raiz do aplicativo.
-
-NavigationContainer é um componente fornecido pelo React Navigation que envolve todo o sistema de navegação do aplicativo. Ele gerencia o estado de navegação e fornece o contexto necessário para os navegadores e rotas.
-
-O componente AppNavigator (definido em ./src/navigation/AppNavigator) é renderizado dentro do NavigationContainer. Ele configura as rotas de navegação do aplicativo.
-
+Este é o ponto de entrada principal da aplicação React Native. Ele configura a estrutura fundamental, envolvendo a navegação e o tema global da interface do usuário. A aplicação é encapsulada por dois componentes principais: o NavigationContainer do React Navigation para gerenciar a navegação entre as telas e o PaperProvider do React Native Paper para fornecer o contexto de tema e estilo para os componentes da UI. Dentro desses provedores, o AppNavigator é renderizado, o que define as rotas da aplicação.
 ### Responsabilidades:
+O arquivo App.tsx é responsável por inicializar a aplicação, envolvendo-a no contexto de navegação do React Navigation e aplicando o tema de design Material Design a todos os componentes da interface. Ele atua como o root da aplicação, garantindo que os componentes de navegação e UI estejam disponíveis em toda a árvore de componentes.
 
-Servir como o componente inicial que envolve toda a estrutura de navegação do aplicativo.
-Inicializar o ambiente de navegação do React Navigation.
-Renderizar o componente responsável por definir as rotas do aplicativo (AppNavigator).
-
-## 2. Arquivo: src/navigation/AppNavigator.js
+## 2. AppNavigator.tsx
 
 Este arquivo define o navegador principal do aplicativo, utilizando um createNativeStackNavigator para gerenciar as diferentes telas.
 
-```JavaScript
+```typescript
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
@@ -81,28 +79,15 @@ export default function AppNavigator() {
 ```
 
 ### Descrição:
-
-Importa as bibliotecas React e createNativeStackNavigator do @react-navigation/native-stack. Também importa os componentes de tela: HomeScreen, TelaDeCadastro, TelaDeEstoque e TelaDeRelatorio dos seus respectivos arquivos.
-
-createNativeStackNavigator() cria um navegador de pilha que utiliza as APIs nativas para proporcionar uma melhor performance e experiência do usuário.
-
-O componente funcional AppNavigator define as diferentes telas (rotas) do aplicativo usando o componente Stack.Navigator.
-Cada Stack.Screen define uma tela individual:
-name: O nome da rota, usado para navegar para esta tela.
-component: O componente React a ser renderizado quando esta rota é acessada.
-options: Um objeto para configurar a aparência da tela. No caso da tela "Home", headerShown: false oculta o cabeçalho padrão.
-
+Este arquivo define a estrutura de navegação da aplicação utilizando createNativeStackNavigator do React Navigation. Ele cria uma pilha de telas que podem ser navegadas, cada uma associada a um nome de rota e um componente React. A tela inicial (HomeScreen) é configurada para não exibir o cabeçalho padrão, enquanto as outras telas (TelaDeCadastro, TelaDeEstoque, TelaDeRelatorio) usam o cabeçalho padrão da pilha de navegação.
 ### Responsabilidades:
+O AppNavigator.tsx é responsável por gerenciar as transições entre as diferentes telas da aplicação. Ele define quais telas estão disponíveis e como elas se relacionam na pilha de navegação, permitindo que o usuário se mova de uma tela para outra de forma intuitiva.
 
-Definir a estrutura de navegação principal do aplicativo utilizando um navegador de pilha.
-Mapear cada rota a um componente de tela específico.
-Configurar opções de visualização para cada tela (como a exibição do cabeçalho).
-
-## 3. Arquivo: src/screens/HomeScreen.js
+## 3. HomeScreen.tsx
 
 Esta tela é a tela inicial do aplicativo, apresentando botões para acessar as outras funcionalidades.
 
-```JavaScript
+```typescript
 import { StyleSheet, View} from 'react-native';
 import CustomButton from '../components/button/CustomButton';
 import buttonStyle from '../styles/CustomButtonStyle/ButtonStyle';
@@ -147,27 +132,15 @@ const styles = StyleSheet.create({
 ```
 
 ### Descrição:
-
-Importa as bibliotecas StyleSheet e View do react-native. Também importa os componentes customizados CustomButton e CustomHeader, e o estilo buttonStyle.
-O componente funcional HomeScreen recebe o objeto navigation como uma prop, que é fornecido pelo React Navigation.
-Renderiza um View como container principal.
-Exibe um CustomHeader com o título do aplicativo e a logo da empresa.
-Utiliza o componente CustomButton para criar três botões: "Cadastro de Itens", "Visualizar Estoque" e "Gerar Relatório".
-A propriedade onPress de cada botão define a ação a ser executada quando o botão é pressionado. Nesse caso, navigation.navigate() é usado para navegar para a tela correspondente (Cadastro, Estoque ou Relatorio).
-O estilo buttonStyle.CustomButtonView é aplicado aos containers dos botões para definir seu layout.
-Define um StyleSheet para estilizar o container principal da tela.
-
+Este componente representa a tela inicial da aplicação. Ele é estruturado com um View principal que contém um cabeçalho personalizado (CustomHeader) e três botões (CustomButton). Cada botão navega para uma tela específica da aplicação (Cadastro, Estoque, Relatório) quando pressionado. Os estilos para o contêiner e para os botões são importados de arquivos de estilo separados.
 ### Responsabilidades:
+A HomeScreen é responsável por fornecer ao usuário o ponto de partida e o acesso rápido às principais funcionalidades do sistema de gerenciamento de estoque, como o cadastro de itens, a visualização do estoque e a geração de relatórios. Ela atua como um hub central para as operações do aplicativo.
 
-Apresentar a tela inicial do aplicativo com as principais funcionalidades.
-Permitir a navegação para as outras telas do aplicativo através dos botões.
-Exibir o cabeçalho personalizado com o título e a logo do aplicativo.
-
-## 4. Arquivo: src/screens/TelaDeCadastro.js
+## 4. TelaDeCadastro.tsx
 
 Esta tela representa a funcionalidade de cadastro de novos itens no estoque.
 
-```JavaScript
+```typescript
 import React, { useState } from 'react';
 import { View, Button, StyleSheet, Alert, ScrollView, Text } from 'react-native';
 import CustomTextField from '../components/button/textField/CustomTextField';
@@ -298,52 +271,177 @@ const styles = StyleSheet.create({
   },
 });
 ```
-
 ### Descrição:
-
-Importa as bibliotecas React, useState, View, Button, StyleSheet, Alert, ScrollView e Text do react-native. Também importa os componentes customizados CustomTextField e CustomHeader.
-
-Utiliza useState hooks para gerenciar os estados dos campos de entrada: nome, quantidade, precoCompra, descricao e codigo.
-Define expressões regulares (quantidadeValida e precoValido) para validar os formatos de entrada de quantidade e preço.
-
-A função salvar é chamada quando o botão "Salvar" é pressionado. Ela realiza as seguintes ações:
-Valida se os campos de quantidade e preço estão no formato correto utilizando as expressões regulares. Se não estiverem válidos, exibe um Alert de erro e interrompe a função.
-
-Cria um objeto dados contendo os valores dos campos de entrada. A quantidade é convertida para um número inteiro usando parseInt, e o preço de compra é convertido para um número decimal usando parseFloat após substituir a vírgula por ponto.
-Exibe os dados cadastrados no console e mostra um Alert de sucesso.
-
-A renderização do componente inclui:
-
-1. Um ScrollView para permitir a rolagem da tela caso o conteúdo não caiba na tela.
-2. Múltiplos componentes CustomTextField para cada campo de entrada (Nome, Quantidade, Preço de Compra, Descrição e Código). Cada CustomTextField recebe um label, o value do estado correspondente, a função onChangeText para atualizar o estado e um placeholder. O keyboardType é definido como numeric para o campo de quantidade e decimal-pad para o campo de preço.
-3. Exibe mensagens de erro (Text com estilo errorText) caso os campos de quantidade ou preço sejam inválidos e tenham algum valor digitado.
-4. Um Button "Salvar" que chama a função salvar quando pressionado. O botão é desabilitado (disabled) se a quantidade ou o preço não forem válidos.
-5. Um View com estilos para o container do botão.
-6. Um View para o footer que contém um CustomHeader com o título "Entrada de itens no estoque" e a logo da empresa.
-7. Define um StyleSheet para estilizar os diversos elementos da tela, incluindo o wrapper, container, container do botão, texto de erro e footer.
-
+Este componente implementa a tela de cadastro de novos itens no estoque. Ele utiliza estados locais para gerenciar os valores dos campos de entrada de texto, como nome, quantidade, preço de compra, descrição e código do item. A tela inclui validações em tempo real para os campos de quantidade e preço, exibindo mensagens de erro se os dados inseridos não corresponderem ao formato esperado. Um botão "Salvar" permite submeter os dados, exibindo um alerta de sucesso ou erro. A tela é envolta por um ScrollView para garantir que o conteúdo seja rolado em dispositivos com telas menores e exibe um cabeçalho personalizado no rodapé.
 ### Responsabilidades:
+A TelaDeCadastro é responsável por coletar as informações necessárias para registrar um novo item no sistema de estoque. Ela assegura que os dados inseridos pelo usuário sejam válidos antes de serem processados e salvos (atualmente logados no console), garantindo a integridade das informações do produto.
 
-Apresentar um formulário para o usuário inserir os detalhes de um novo item de estoque.
-Gerenciar o estado de cada campo de entrada.
-Validar a entrada dos campos de quantidade e preço.
-Salvar os dados do item cadastrado (atualmente apenas log no console e um alerta de sucesso).
-Exibir feedback visual para erros de validação.
-Mostrar um cabeçalho personalizado na parte inferior da tela.
+## 5. TeladeEstoque.tsx
+```typescript
+import { StyleSheet, ScrollView } from 'react-native';
+import * as React from 'react';
+import { DataTable } from 'react-native-paper';
+import { useEffect } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation'; // <- Import necessário
+
+export default function TelaDeEstoque() {
+  const [page, setPage] = React.useState<number>(0);
+  const [numberOfItemsPerPageList] = React.useState([3, 5, 7, 9]);
+  const [itemsPerPage, onItemsPerPageChange] = React.useState(
+    numberOfItemsPerPageList[0],
+  );
+
+  // Parte do codigo que forca a ir na horizontal
+  useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+
+    return () => {
+      ScreenOrientation.lockAsync(
+        ScreenOrientation.OrientationLock.PORTRAIT_UP,
+      );
+    };
+  }, []);
+
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, items.length);
+
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <DataTable>
+        <DataTable.Header style={styles.header}>
+          <DataTable.Title style={{ flex: 0.4 }} textStyle={styles.titleText}>
+            ID
+          </DataTable.Title>
+          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
+            Nome
+          </DataTable.Title>
+          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
+            Quantidade
+          </DataTable.Title>
+          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
+            Preço unitário
+          </DataTable.Title>
+          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
+            Descrição
+          </DataTable.Title>
+          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
+            Código
+          </DataTable.Title>
+        </DataTable.Header>
+
+        {items.slice(from, to).map((item) => (
+          <DataTable.Row key={item.key}>
+            <DataTable.Cell
+              style={{ flex: 0.4 }}
+              textStyle={styles.cellStyleText}
+            >
+              {item.key}
+            </DataTable.Cell>
+            <DataTable.Cell
+              style={{ flex: 1 }}
+              textStyle={styles.cellStyleText}
+            >
+              {item.name}
+            </DataTable.Cell>
+            <DataTable.Cell
+              style={{ flex: 1 }}
+              textStyle={styles.cellStyleText}
+            >
+              {item.quantidade}
+            </DataTable.Cell>
+            <DataTable.Cell
+              style={{ flex: 1 }}
+              textStyle={styles.cellStyleText}
+            >
+              R${item.precoUnit}
+            </DataTable.Cell>
+            <DataTable.Cell
+              style={{ flex: 1 }}
+              textStyle={styles.cellStyleText}
+            >
+              {item.descricao}
+            </DataTable.Cell>
+            <DataTable.Cell
+              style={{ flex: 0.99 }}
+              textStyle={styles.cellStyleText}
+            >
+              {item.codigo}
+            </DataTable.Cell>
+          </DataTable.Row>
+        ))}
+
+        <DataTable.Pagination
+          page={page}
+          numberOfPages={Math.ceil(items.length / itemsPerPage)}
+          onPageChange={(page) => setPage(page)}
+          label={`${from + 1}-${to} of ${items.length}`}
+          numberOfItemsPerPageList={numberOfItemsPerPageList}
+          numberOfItemsPerPage={itemsPerPage}
+          onItemsPerPageChange={onItemsPerPageChange}
+          showFastPaginationControls
+          selectPageDropdownLabel={'Rows per page'}
+        />
+      </DataTable>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'flex-start',
+    backgroundColor: '#502f5a',
+  },
+  title: {
+    flex: 0.3,
+    alignItems: 'flex-start',
+  },
+  titleText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  cellStyleText: {
+    flex: 6,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+});
+
+```
+### Descrição
+Este componente exibe uma tabela de itens do estoque utilizando o componente DataTable do React Native Paper. Ele gerencia a paginação dos itens e força a orientação da tela para o modo paisagem (LANDSCAPE) ao ser montado, retornando à orientação retrato (PORTRAIT_UP) ao ser desmontado, o que é útil para exibir tabelas com muitas colunas. Os dados dos itens são fornecidos por um mock estático, e a tabela é renderizada dentro de um ScrollView para permitir a rolagem se houver muitos itens ou se a tela for menor.
+### Responsabilidades
+A TelaDeEstoque é responsável por apresentar uma visão organizada e paginada dos itens atualmente no estoque. Ela permite ao usuário visualizar rapidamente detalhes como nome, quantidade, preço unitário, descrição e código de cada item, facilitando o acompanhamento do inventário.
+## 6. TeladeRelatório.tsx
+
+```typescript
+TODO: CODE HERE
+```
+### Descrição
+Este componente é uma tela placeholder para a funcionalidade de relatórios da aplicação. Atualmente, ele exibe apenas um texto simples "Tela De Relatorio" centralizado na tela. O código inclui um comentário //TODO: indicando que a implementação completa da funcionalidade de relatórios ainda precisa ser desenvolvida.
+### Responsabilidades
+A TelaDeRelatorio tem a responsabilidade futura de gerar e exibir relatórios sobre o estoque, fornecendo insights e análises baseadas nos dados dos itens. No momento, sua responsabilidade é servir como um marcador de lugar para a funcionalidade a ser implementada.
 
 ## Usando o Prettier
-
 ```bash
 npx prettier --write .
 ```
 
-# Em um arquivo específico
+### Em um arquivo específico
 
 ```bash
 npx prettier --write src/App.js
 ```
 
-# Ver quais arquivos vão ser formatados
+### Ver quais arquivos vão ser formatados
 
 ```bash
 npx prettier --check .
