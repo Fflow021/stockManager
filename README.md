@@ -3,6 +3,7 @@
 Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenciador de Estoque Eita Sorvete Açaí Lanches", desenvolvido utilizando React Native. O aplicativo tem como objetivo facilitar o gerenciamento de estoque da empresa, oferecendo funcionalidades para cadastro de itens, visualização do estoque atual e geração de relatórios.
 
 ## Tecnologias Utilizadas
+
 - React 18.3.1
 - React-native 0.76.9
 - Expo 52.0.46
@@ -14,15 +15,21 @@ Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenc
 - Gemini AI: Documentação
 
 ## Instalação e execução do projeto
+
 ### Instalar as dependências
+
 ```bash
 npm i
 ```
+
 ### Inicializar o Expo
+
 ```bash
 npx expo start
 ```
+
 ### Android Studio
+
 No Android Studio selecione o seu dispositivo para emular e volte no terminal que tinha sido aberto com o `npx expo start` e use a opção `a`,
 para iniciar a aplicação no android emulado.
 
@@ -48,8 +55,11 @@ export default function App() {
 ```
 
 ### Descrição:
+
 Este é o ponto de entrada principal da aplicação React Native. Ele configura a estrutura fundamental, envolvendo a navegação e o tema global da interface do usuário. A aplicação é encapsulada por dois componentes principais: o NavigationContainer do React Navigation para gerenciar a navegação entre as telas e o PaperProvider do React Native Paper para fornecer o contexto de tema e estilo para os componentes da UI. Dentro desses provedores, o AppNavigator é renderizado, o que define as rotas da aplicação.
+
 ### Responsabilidades:
+
 O arquivo App.tsx é responsável por inicializar a aplicação, envolvendo-a no contexto de navegação do React Navigation e aplicando o tema de design Material Design a todos os componentes da interface. Ele atua como o root da aplicação, garantindo que os componentes de navegação e UI estejam disponíveis em toda a árvore de componentes.
 
 ## 2. AppNavigator.tsx
@@ -79,8 +89,11 @@ export default function AppNavigator() {
 ```
 
 ### Descrição:
+
 Este arquivo define a estrutura de navegação da aplicação utilizando createNativeStackNavigator do React Navigation. Ele cria uma pilha de telas que podem ser navegadas, cada uma associada a um nome de rota e um componente React. A tela inicial (HomeScreen) é configurada para não exibir o cabeçalho padrão, enquanto as outras telas (TelaDeCadastro, TelaDeEstoque, TelaDeRelatorio) usam o cabeçalho padrão da pilha de navegação.
+
 ### Responsabilidades:
+
 O AppNavigator.tsx é responsável por gerenciar as transições entre as diferentes telas da aplicação. Ele define quais telas estão disponíveis e como elas se relacionam na pilha de navegação, permitindo que o usuário se mova de uma tela para outra de forma intuitiva.
 
 ## 3. HomeScreen.tsx
@@ -132,8 +145,11 @@ const styles = StyleSheet.create({
 ```
 
 ### Descrição:
+
 Este componente representa a tela inicial da aplicação. Ele é estruturado com um View principal que contém um cabeçalho personalizado (CustomHeader) e três botões (CustomButton). Cada botão navega para uma tela específica da aplicação (Cadastro, Estoque, Relatório) quando pressionado. Os estilos para o contêiner e para os botões são importados de arquivos de estilo separados.
+
 ### Responsabilidades:
+
 A HomeScreen é responsável por fornecer ao usuário o ponto de partida e o acesso rápido às principais funcionalidades do sistema de gerenciamento de estoque, como o cadastro de itens, a visualização do estoque e a geração de relatórios. Ela atua como um hub central para as operações do aplicativo.
 
 ## 4. TelaDeCadastro.tsx
@@ -271,12 +287,17 @@ const styles = StyleSheet.create({
   },
 });
 ```
+
 ### Descrição:
+
 Este componente implementa a tela de cadastro de novos itens no estoque. Ele utiliza estados locais para gerenciar os valores dos campos de entrada de texto, como nome, quantidade, preço de compra, descrição e código do item. A tela inclui validações em tempo real para os campos de quantidade e preço, exibindo mensagens de erro se os dados inseridos não corresponderem ao formato esperado. Um botão "Salvar" permite submeter os dados, exibindo um alerta de sucesso ou erro. A tela é envolta por um ScrollView para garantir que o conteúdo seja rolado em dispositivos com telas menores e exibe um cabeçalho personalizado no rodapé.
+
 ### Responsabilidades:
+
 A TelaDeCadastro é responsável por coletar as informações necessárias para registrar um novo item no sistema de estoque. Ela assegura que os dados inseridos pelo usuário sejam válidos antes de serem processados e salvos (atualmente logados no console), garantindo a integridade das informações do produto.
 
 ## 5. TeladeEstoque.tsx
+
 ```typescript
 import { StyleSheet, ScrollView } from 'react-native';
 import * as React from 'react';
@@ -416,21 +437,31 @@ const styles = StyleSheet.create({
 });
 
 ```
+
 ### Descrição
+
 Este componente exibe uma tabela de itens do estoque utilizando o componente DataTable do React Native Paper. Ele gerencia a paginação dos itens e força a orientação da tela para o modo paisagem (LANDSCAPE) ao ser montado, retornando à orientação retrato (PORTRAIT_UP) ao ser desmontado, o que é útil para exibir tabelas com muitas colunas. Os dados dos itens são fornecidos por um mock estático, e a tabela é renderizada dentro de um ScrollView para permitir a rolagem se houver muitos itens ou se a tela for menor.
+
 ### Responsabilidades
+
 A TelaDeEstoque é responsável por apresentar uma visão organizada e paginada dos itens atualmente no estoque. Ela permite ao usuário visualizar rapidamente detalhes como nome, quantidade, preço unitário, descrição e código de cada item, facilitando o acompanhamento do inventário.
+
 ## 6. TeladeRelatório.tsx
 
 ```typescript
 TODO: CODE HERE
 ```
+
 ### Descrição
+
 Este componente é uma tela placeholder para a funcionalidade de relatórios da aplicação. Atualmente, ele exibe apenas um texto simples "Tela De Relatorio" centralizado na tela. O código inclui um comentário //TODO: indicando que a implementação completa da funcionalidade de relatórios ainda precisa ser desenvolvida.
+
 ### Responsabilidades
+
 A TelaDeRelatorio tem a responsabilidade futura de gerar e exibir relatórios sobre o estoque, fornecendo insights e análises baseadas nos dados dos itens. No momento, sua responsabilidade é servir como um marcador de lugar para a funcionalidade a ser implementada.
 
 ## Usando o Prettier
+
 ```bash
 npx prettier --write .
 ```
