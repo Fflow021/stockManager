@@ -42,14 +42,18 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
 import { PaperProvider } from 'react-native-paper';
+import { SQLiteProvider } from 'expo-sqlite';
+import { initializeDatabase } from './src/serviço/produtoServiço';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <PaperProvider>
-        <AppNavigator />
-      </PaperProvider>
-    </NavigationContainer>
+    <SQLiteProvider databaseName="produtos_db" onInit={initializeDatabase}>
+      <NavigationContainer>
+        <PaperProvider>
+          <AppNavigator />
+        </PaperProvider>
+      </NavigationContainer>
+    </SQLiteProvider>
   );
 }
 ```
@@ -79,7 +83,11 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Cadastro" component={TelaDeCadastro} />
       <Stack.Screen name="Estoque" component={TelaDeEstoque} />
       <Stack.Screen name="Relatorio" component={TelaDeRelatorio} />
@@ -101,34 +109,34 @@ O AppNavigator.tsx é responsável por gerenciar as transições entre as difere
 Esta tela é a tela inicial do aplicativo, apresentando botões para acessar as outras funcionalidades.
 
 ```typescript
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import CustomButton from '../components/button/CustomButton';
-import buttonStyle from '../styles/CustomButtonStyle/ButtonStyle';
+import buttonStyle from '../components/button/CustomButtonStyle/ButtonStyle';
 import CustomHeader from '../components/button/header/CustomHeader';
 
-export default function HomeScreen({navigation}: any) {
+export default function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <CustomHeader
-        title='Gerenciador de Estoque da Eita Sorvete Açaí Lanches'
-        imageSource={require('../../assets/eitaSorveteAcaiLanchesLOGO.jpg')} />
+        title="Gerenciador de Estoque da Eita Sorvete Açaí Lanches"
+        imageSource={require('../../assets/eitaSorveteAcaiLanchesLOGO.jpg')}
+      />
 
       <View style={buttonStyle.CustomButtonView}>
         <CustomButton
-          title='Cadastro de Itens'
+          title="Cadastro de Itens"
           onPress={() => navigation.navigate('Cadastro')}
-
         />
       </View>
       <View style={buttonStyle.CustomButtonView}>
         <CustomButton
-          title='Visualizar Estoque'
+          title="Visualizar Estoque"
           onPress={() => navigation.navigate('Estoque')}
         />
       </View>
       <View style={buttonStyle.CustomButtonView}>
         <CustomButton
-          title='Gerar Relatório'
+          title="Gerar Relatório"
           onPress={() => navigation.navigate('Relatorio')}
         />
       </View>
@@ -158,9 +166,19 @@ Esta tela representa a funcionalidade de cadastro de novos itens no estoque.
 
 ```typescript
 import React, { useState } from 'react';
-import { View, Button, StyleSheet, Alert, ScrollView, Text } from 'react-native';
+import {
+  View,
+  Button,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  Text,
+} from 'react-native';
 import CustomTextField from '../components/button/textField/CustomTextField';
 import CustomHeader from '../components/button/header/CustomHeader';
+import { insertProduto } from '../serviço/produtoServiço';
+import Produto from '../modelo/produtoModel';
+import { useSQLiteContext } from 'expo-sqlite';
 
 export default function TelaDeCadastro() {
   const [nome, setNome] = useState<string>('');
@@ -171,27 +189,46 @@ export default function TelaDeCadastro() {
 
   const quantidadeValida = /^\d+$/.test(quantidade);
   const precoValido = /^\d+([.,]\d+)?$/.test(precoCompra);
+  const db = useSQLiteContext();
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!quantidadeValida) {
-      Alert.alert('Erro', 'Quantidade inválida. Insira somente números inteiros.');
+      Alert.alert(
+        'Erro',
+        'Quantidade inválida. Insira somente números inteiros.',
+      );
       return;
     }
     if (!precoValido) {
-      Alert.alert('Erro', 'Preço inválido. Insira um valor numérico, com opcional decimal.');
+      Alert.alert(
+        'Erro',
+        'Preço inválido. Insira um valor numérico com decimal.',
+      );
       return;
     }
 
-    const dados = {
+    const produto = new Produto({
       nome,
       quantidade: parseInt(quantidade, 10),
-      preco_compra: parseFloat(precoCompra.replace(',', '.')),
+      precoCompra: parseFloat(precoCompra.replace(',', '.')),
       descricao,
       codigo,
-    };
+    });
 
-    console.log('Dados cadastrados:', dados);
-    Alert.alert('Sucesso', 'Item cadastrado com sucesso!');
+    try {
+      const id = await insertProduto(db, produto);
+      console.log('Produto inserido com sucesso. ID:', id);
+      Alert.alert('Sucesso', 'Item cadastrado com sucesso!');
+      // Limpar campos, se quiser
+      setNome('');
+      setQuantidade('');
+      setPrecoCompra('');
+      setDescricao('');
+      setCodigo('');
+    } catch (error) {
+      console.error('Erro ao inserir produto:', error);
+      Alert.alert('Erro', 'Não foi possível salvar o produto.');
+    }
   };
 
   return (
@@ -212,9 +249,7 @@ export default function TelaDeCadastro() {
           keyboardType="numeric"
         />
         {!quantidadeValida && quantidade.length > 0 && (
-          <Text style={styles.errorText}>
-            Insira apenas números inteiros.
-          </Text>
+          <Text style={styles.errorText}>Insira apenas números inteiros.</Text>
         )}
 
         <CustomTextField
@@ -299,23 +334,46 @@ A TelaDeCadastro é responsável por coletar as informações necessárias para 
 ## 5. TeladeEstoque.tsx
 
 ```typescript
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, Text, Alert } from 'react-native';
 import * as React from 'react';
 import { DataTable } from 'react-native-paper';
-import { useEffect } from 'react';
-import * as ScreenOrientation from 'expo-screen-orientation'; // <- Import necessário
+import { useEffect, useState } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
+
+// Importe o hook para acessar o banco de dados
+import { useSQLiteContext } from 'expo-sqlite';
+// Importe a função para buscar todos os produtos (AJUSTE ESTE CAMINHO!)
+import { getAllProdutos } from '../serviço/produtoServiço';
+
+// Defina a interface do item do seu estoque para tipagem correta.
+// Sua função getAllProdutos (em databaseService.ts) precisará mapear
+// 'preco_unidade' (do DB) para 'precoUnit' (nesta interface).
+interface EstoqueItem {
+  id: number;
+  nome: string;
+  quantidade: number;
+  precoUnit: number;
+  descricao: string;
+  codigo: string;
+}
 
 export default function TelaDeEstoque() {
-  const [page, setPage] = React.useState<number>(0);
-  const [numberOfItemsPerPageList] = React.useState([3, 5, 7, 9]);
-  const [itemsPerPage, onItemsPerPageChange] = React.useState(
+  const [page, setPage] = useState<number>(0);
+  const [numberOfItemsPerPageList] = useState([3, 5, 7, 9]);
+  const [itemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0],
   );
+  // O estado 'items' agora será preenchido com dados do SQLite
+  const [items, setItems] = useState<EstoqueItem[]>([]);
 
-  // Parte do codigo que forca a ir na horizontal
+  // Obtenha a instância do banco de dados a partir do contexto do Expo SQLite
+  const db = useSQLiteContext();
+
+  // Efeito para forçar a orientação da tela para horizontal
   useEffect(() => {
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
 
+    // Função de limpeza para retornar à orientação vertical ao sair da tela
     return () => {
       ScreenOrientation.lockAsync(
         ScreenOrientation.OrientationLock.PORTRAIT_UP,
@@ -323,9 +381,30 @@ export default function TelaDeEstoque() {
     };
   }, []);
 
+  // Efeito para carregar os dados do banco de dados
+  useEffect(() => {
+    const loadItemsFromDatabase = async () => {
+      try {
+        // Busca os produtos do DB usando a função que você implementará
+        const loadedItems = await getAllProdutos(db);
+        setItems(loadedItems); // Atualiza o estado com os dados carregados
+      } catch (error) {
+        console.error('Falha ao carregar itens do banco de dados:', error);
+        Alert.alert('Erro', 'Não foi possível carregar os itens do estoque.');
+      }
+    };
+
+    // Só tenta carregar se a instância do banco de dados estiver disponível
+    if (db) {
+      loadItemsFromDatabase();
+    }
+  }, [db]); // Dependência 'db' garante que o carregamento aconteça quando o DB estiver pronto
+
+  // Lógica de paginação
   const from = page * itemsPerPage;
   const to = Math.min((page + 1) * itemsPerPage, items.length);
 
+  // Redefine a página para 0 quando o número de itens por página muda
   useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
@@ -354,19 +433,20 @@ export default function TelaDeEstoque() {
           </DataTable.Title>
         </DataTable.Header>
 
+        {/* Mapeia sobre os itens carregados do banco de dados */}
         {items.slice(from, to).map((item) => (
-          <DataTable.Row key={item.key}>
+          <DataTable.Row key={item.id}>
             <DataTable.Cell
               style={{ flex: 0.4 }}
               textStyle={styles.cellStyleText}
             >
-              {item.key}
+              {item.id}
             </DataTable.Cell>
             <DataTable.Cell
               style={{ flex: 1 }}
               textStyle={styles.cellStyleText}
             >
-              {item.name}
+              {item.nome}
             </DataTable.Cell>
             <DataTable.Cell
               style={{ flex: 1 }}
@@ -378,7 +458,7 @@ export default function TelaDeEstoque() {
               style={{ flex: 1 }}
               textStyle={styles.cellStyleText}
             >
-              R${item.precoUnit}
+              R${item.precoUnit.toFixed(2)}
             </DataTable.Cell>
             <DataTable.Cell
               style={{ flex: 1 }}
@@ -399,43 +479,69 @@ export default function TelaDeEstoque() {
           page={page}
           numberOfPages={Math.ceil(items.length / itemsPerPage)}
           onPageChange={(page) => setPage(page)}
-          label={`${from + 1}-${to} of ${items.length}`}
+          label={`${from + 1}-${to} de ${items.length}`}
           numberOfItemsPerPageList={numberOfItemsPerPageList}
           numberOfItemsPerPage={itemsPerPage}
           onItemsPerPageChange={onItemsPerPageChange}
           showFastPaginationControls
-          selectPageDropdownLabel={'Rows per page'}
+          selectPageDropdownLabel={'Linhas por página'}
         />
       </DataTable>
+
+      {/* Mensagem exibida se não houver itens no estoque */}
+      {items.length === 0 && (
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: 20,
+            fontSize: 16,
+            color: '#555',
+          }}
+        >
+          Nenhum item cadastrado no estoque.
+        </Text>
+      )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
+    paddingBottom: 100,
   },
-  header: {
-    alignItems: 'flex-start',
-    backgroundColor: '#502f5a',
+  buttonContainer: {
+    marginTop: 24,
   },
-  title: {
-    flex: 0.3,
-    alignItems: 'flex-start',
+  errorText: {
+    color: 'red',
+    marginTop: 4,
+    marginBottom: 8,
   },
-  titleText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#ffffff',
+  footer: {
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#ccc',
   },
   cellStyleText: {
     flex: 6,
     fontWeight: 'bold',
     color: '#000000',
   },
+  titleText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  header: {
+    alignItems: 'flex-start',
+    backgroundColor: '#502f5a',
+  },
 });
-
 ```
 
 ### Descrição
