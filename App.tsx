@@ -7,8 +7,7 @@ import { initializeDatabase } from './src/serviço/produtoServiço';
 
 export default function App() {
   return (
-    <SQLiteProvider databaseName='produtos_db'
-    onInit={initializeDatabase}>
+    <SQLiteProvider databaseName="produtos_db" onInit={initializeDatabase}>
       <NavigationContainer>
         <PaperProvider>
           <AppNavigator />

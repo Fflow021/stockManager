@@ -26,14 +26,20 @@ export default function TelaDeCadastro() {
 
   const salvar = async () => {
     if (!quantidadeValida) {
-      Alert.alert('Erro', 'Quantidade inválida. Insira somente números inteiros.');
+      Alert.alert(
+        'Erro',
+        'Quantidade inválida. Insira somente números inteiros.',
+      );
       return;
     }
     if (!precoValido) {
-      Alert.alert('Erro', 'Preço inválido. Insira um valor numérico com decimal.');
+      Alert.alert(
+        'Erro',
+        'Preço inválido. Insira um valor numérico com decimal.',
+      );
       return;
     }
-  
+
     const produto = new Produto({
       nome,
       quantidade: parseInt(quantidade, 10),
@@ -41,7 +47,7 @@ export default function TelaDeCadastro() {
       descricao,
       codigo,
     });
-  
+
     try {
       const id = await insertProduto(db, produto);
       console.log('Produto inserido com sucesso. ID:', id);
