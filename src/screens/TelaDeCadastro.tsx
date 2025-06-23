@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import CustomTextField from '../components/button/textField/CustomTextField';
 import CustomHeader from '../components/button/header/CustomHeader';
+import { insertProduto } from '../serviço/produtoServiço';
+import Produto from '../modelo/produtoModel';
+import { useSQLiteContext } from 'expo-sqlite';
 
 export default function TelaDeCadastro() {
   const [nome, setNome] = useState<string>('');
@@ -19,8 +22,9 @@ export default function TelaDeCadastro() {
 
   const quantidadeValida = /^\d+$/.test(quantidade);
   const precoValido = /^\d+([.,]\d+)?$/.test(precoCompra);
+  const db = useSQLiteContext();
 
-  const salvar = () => {
+  const salvar = async () => {
     if (!quantidadeValida) {
       Alert.alert(
         'Erro',
@@ -36,16 +40,28 @@ export default function TelaDeCadastro() {
       return;
     }
 
-    const dados = {
+    const produto = new Produto({
       nome,
       quantidade: parseInt(quantidade, 10),
-      preco_compra: parseFloat(precoCompra.replace(',', '.')),
+      precoCompra: parseFloat(precoCompra.replace(',', '.')),
       descricao,
       codigo,
-    };
+    });
 
-    console.log('Dados cadastrados:', dados);
-    Alert.alert('Sucesso', 'Item cadastrado com sucesso!');
+    try {
+      const id = await insertProduto(db, produto);
+      console.log('Produto inserido com sucesso. ID:', id);
+      Alert.alert('Sucesso', 'Item cadastrado com sucesso!');
+      // Limpar campos, se quiser
+      setNome('');
+      setQuantidade('');
+      setPrecoCompra('');
+      setDescricao('');
+      setCodigo('');
+    } catch (error) {
+      console.error('Erro ao inserir produto:', error);
+      Alert.alert('Erro', 'Não foi possível salvar o produto.');
+    }
   };
 
   return (
