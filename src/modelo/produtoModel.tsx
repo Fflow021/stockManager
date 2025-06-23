@@ -1,4 +1,7 @@
 export default class Produto {
+  static validar(novoProduto: Produto) {
+    throw new Error('Method not implemented.');
+  }
   nome: string;
   quantidade: number;
   precoCompra: number;
