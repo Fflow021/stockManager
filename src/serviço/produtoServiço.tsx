@@ -14,7 +14,7 @@ interface ProdutoDB {
 
 // Interface para o formato dos dados que sua TelaDeEstoque (front-end) espera.
 // Note que a propriedade do preço é 'precoUnit'.
-interface EstoqueItem {
+export interface EstoqueItem {
   id: number;
   nome: string;
   quantidade: number; // Propriedade 'quantidade' no front-end
