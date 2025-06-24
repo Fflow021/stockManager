@@ -31,7 +31,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       style={[
         styles.button,
         disabled && styles.disabled,
-        style, // estilo externo personalizado
+        style, 
       ]}
     >
       <Text style={[styles.text, textStyle]}>{title}</Text>

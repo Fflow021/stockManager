@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-//TODO: Tela de Relatorio
+
 export default function TelaDeRelatorio() {
   return (
     <View style={styles.container}>
