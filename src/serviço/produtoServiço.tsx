@@ -25,20 +25,26 @@ interface EstoqueItem {
 
 /**
  * Inicializa o banco de dados criando a tabela 'cadastro' se ela não existir.
- * Esta função deve ser passada para a prop 'onInit' do SQLiteProvider.
  * @param database A instância do banco de dados SQLite.
  */
 export async function initializeDatabase(database: SQLiteDatabase) {
-  await database.execAsync(`
-    CREATE TABLE IF NOT EXISTS cadastro (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      quantidade INTEGER NOT NULL, -- Corrigido para INTEGER
-      preco_unidade REAL NOT NULL,
-      descricao TEXT NOT NULL,
-      codigo TEXT NOT NULL
-    );
-  `);
+  try {
+    console.log('[DB] Inicializando o banco de dados...'); // Log de início
+    await database.execAsync(`
+      CREATE TABLE IF NOT EXISTS cadastro (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        quantidade INTEGER NOT NULL,
+        preco_unidade REAL NOT NULL,
+        descricao TEXT NOT NULL,
+        codigo TEXT NOT NULL
+      );
+    `);
+    console.log('[DB] Banco de dados inicializado com sucesso.'); // Log de sucesso
+  } catch (error) {
+    console.error('[DB] Falha na inicialização do banco de dados:', error); // Log de erro
+    throw error; // Relança o erro para ser capturado pelo provider
+  }
 }
 
 /**
@@ -97,4 +103,65 @@ export async function getAllProdutos(
     // Em caso de erro, é melhor relançar para que a TelaDeEstoque possa tratar.
     throw error;
   }
+}
+
+/**
+ * Deleta um produto da tabela 'cadastro' pelo seu ID.
+ * @param db A instância do banco de dados SQLite.
+ * @param id O ID do produto a ser deletado.
+ */
+export async function deleteProduto(db: SQLiteDatabase, id: number) {
+  const result = await db.runAsync('DELETE FROM cadastro WHERE id = ?;', [id]);
+  if (result.changes === 0) {
+    throw new Error(`Nenhum produto encontrado com o ID ${id} para deletar.`);
+  }
+  console.log(`Produto com ID ${id} deletado com sucesso.`);
+}
+
+/**
+ * Atualiza a quantidade de um produto, reduzindo o valor especificado.
+ * @param db A instância do banco de dados SQLite.
+ * @param id O ID do produto a ser atualizado.
+ * @param quantidadeAReduzir A quantidade a ser subtraída do estoque.
+ */
+export async function reduceProdutoQuantidade(
+  db: SQLiteDatabase,
+  id: number,
+  quantidadeAReduzir: number,
+) {
+  // Inicia uma transação para garantir a atomicidade da operação de leitura e escrita.
+  await db.withTransactionAsync(async () => {
+    // Busca o produto atual para verificar a quantidade em estoque.
+    const produtoAtual = await db.getFirstAsync<ProdutoDB>(
+      'SELECT quantidade FROM cadastro WHERE id = ?;',
+      [id],
+    );
+
+    if (!produtoAtual) {
+      throw new Error(`Produto com ID ${id} não encontrado.`);
+    }
+
+    const novaQuantidade = produtoAtual.quantidade - quantidadeAReduzir;
+
+    if (novaQuantidade < 0) {
+      throw new Error(
+        'A quantidade a reduzir é maior que a quantidade em estoque.',
+      );
+    }
+
+    // Atualiza a quantidade do produto no banco de dados.
+    const result = await db.runAsync(
+      'UPDATE cadastro SET quantidade = ? WHERE id = ?;',
+      [novaQuantidade, id],
+    );
+
+    if (result.changes === 0) {
+      throw new Error(
+        `Nenhum produto foi atualizado. Verifique se o ID ${id} é válido.`,
+      );
+    }
+    console.log(
+      `Quantidade do produto com ID ${id} atualizada para ${novaQuantidade}.`,
+    );
+  });
 }
