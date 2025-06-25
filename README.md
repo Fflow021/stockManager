@@ -4,15 +4,17 @@ Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenc
 
 ## Tecnologias Utilizadas
 
-  - React 18.3.1
-  - React-native 0.76.9
-  - Expo 52.0.46
-  - Roteamento: React Navigation
-  - Estilos: React Native Paper
-  - SQLite: Banco de dados
-  - Padronização e Qualidade: Prettier
-  - Testes: Jest
-  - Gemini AI: Documentação
+- React 18.3.1
+- React-native 0.76.9
+- Expo 52.0.46
+- Roteamento: React Navigation
+- Estilos: React Native Paper
+- SQLite: Banco de dados local com `expo-sqlite`
+- Geração de PDF: `expo-print`
+- Compartilhamento: `expo-sharing`
+- Padronização e Qualidade: Prettier
+- Testes: Jest
+- Gemini AI: Documentação
 
 ## Instalação e execução do projeto
 
@@ -346,92 +348,175 @@ Este componente exibe uma tabela paginada (`DataTable`) com todos os itens do es
 
 ### Responsabilidades:
 
-A `TelaDeEstoque` é responsável por:
+A TelaDeEstoque é responsável por apresentar uma visão organizada e paginada dos itens atualmente no estoque. Ela permite ao usuário visualizar rapidamente detalhes como nome, quantidade, preço unitário, descrição e código de cada item, facilitando o acompanhamento do inventário.
 
-  * Apresentar uma visão organizada e paginada dos itens em estoque.
-  * Buscar e exibir os dados mais recentes do banco de dados.
-  * Fornecer uma interface (via modais) para que o usuário possa modificar o estoque (reduzir quantidade) ou remover itens, interagindo com o banco de dados através das funções do `produtoServiço`.
+## 6. TeladeRelatório.tsx
 
-## 6\. TelaDeRelatorio.tsx
+Esta tela busca os dados do estoque e gera um relatório em formato PDF que pode ser compartilhado.
 
 ```typescript
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 
-//TODO: Tela de Relatorio
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text, Alert } from 'react-native';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import { useSQLiteContext } from 'expo-sqlite';
+import { getAllProdutos, EstoqueItem } from '../serviço/produtoServiço';
+import CustomButton from '../components/button/CustomButton';
+
+const createHtml = (products: EstoqueItem[]): string => {
+    const totalValue = products.reduce((sum, product) => sum + (product.quantidade * product.precoUnit), 0);
+  
+    const productRows = products
+      .map(
+        (p) => `
+      <tr>
+        <td>${p.id}</td>
+        <td>${p.nome}</td>
+        <td>${p.quantidade}</td>
+        <td>R$ ${p.precoUnit.toFixed(2)}</td>
+        <td>R$ ${(p.quantidade * p.precoUnit).toFixed(2)}</td>
+      </tr>
+    `
+      )
+      .join('');
+  
+    return \`
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Relatório de Estoque</title>
+          <style>
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; }
+            h1 { text-align: center; color: #502f5a; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+            th { background-color: #502f5a; color: #efbd10; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .footer { text-align: right; margin-top: 20px; font-weight: bold; font-size: 1.1em; }
+          </style>
+        </head>
+        <body>
+          <h1>Relatório de Estoque</h1>
+          <p>Data de Geração: \${new Date().toLocaleDateString('pt-BR')}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Produto</th>
+                <th>Qtde.</th>
+                <th>Preço Unit.</th>
+                <th>Valor Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              \${productRows}
+            </tbody>
+          </table>
+          <div class="footer">
+            <p>Valor Total em Estoque: R$ \${totalValue.toFixed(2)}</p>
+          </div>
+        </body>
+      </html>
+    \`;
+};
+  
 export default function TelaDeRelatorio() {
+  const db = useSQLiteContext(); 
+  const [products, setProducts] = useState<EstoqueItem[]>([]); 
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await getAllProdutos(db); 
+        setProducts(data);
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        Alert.alert('Erro', 'Falha ao carregar os produtos do banco de dados.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [db]);
+
+  const generateAndSharePdf = async () => {
+    if (products.length === 0) {
+      Alert.alert('Aviso', 'Nenhum produto cadastrado para gerar o relatório.');
+      return;
+    }
+
+    try {
+      const htmlContent = createHtml(products);
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      
+      if (!(await Sharing.isAvailableAsync())) {
+        Alert.alert('Erro', 'O compartilhamento não está disponível nesta plataforma.');
+        return;
+      }
+
+      await Sharing.shareAsync(uri, { dialogTitle: 'Compartilhar Relatório de Estoque' });
+    } catch (error) {
+      console.error("Erro ao gerar ou compartilhar PDF:", error);
+      Alert.alert('Erro', 'Ocorreu um erro ao gerar o PDF.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#502f5a" />
+        <Text>Carregando produtos...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Tela De Relatorio</Text>
+      <Text style={styles.title}>Relatório de Produtos</Text>
+      <Text style={styles.subtitle}>
+        Pressione o botão abaixo para gerar e compartilhar o relatório de estoque em formato PDF.
+      </Text>
+      <CustomButton title="Gerar e Compartilhar PDF" onPress={generateAndSharePdf} />
     </View>
   );
 }
-//...
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#502f5a',
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#333',
+  },
+});
+
 ```
 
-### Descrição:
+### Descrição
 
-Este componente é um placeholder para a futura funcionalidade de relatórios da aplicação. Atualmente, ele exibe apenas um texto simples e contém um comentário `//TODO:` indicando que a implementação ainda está pendente.
+Este componente implementa a funcionalidade de geração de relatórios. Ao carregar, ele busca todos os produtos do banco de dados SQLite. O usuário pode então clicar em um botão para gerar um relatório em PDF, que é criado a partir de um template HTML preenchido com os dados do estoque. Após a geração, o menu de compartilhamento do sistema operacional é aberto para permitir que o usuário envie ou salve o arquivo PDF.
 
-### Responsabilidades:
+### Responsabilidades
 
-No futuro, será responsável por gerar e exibir relatórios sobre o estoque, fornecendo insights e análises baseadas nos dados dos itens.
-
-## 7\. produtoServiço.tsx
-
-Este arquivo centraliza toda a lógica de interação com o banco de dados SQLite.
-
-```typescript
-import { type SQLiteDatabase } from 'expo-sqlite';
-import Produto from '../modelo/produtoModel';
-
-// ... interfaces
-
-export async function initializeDatabase(database: SQLiteDatabase) {
-  await database.execAsync(`
-    CREATE TABLE IF NOT EXISTS cadastro (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      quantidade INTEGER NOT NULL,
-      preco_unidade REAL NOT NULL,
-      descricao TEXT NOT NULL,
-      codigo TEXT NOT NULL
-    );
-  `);
-}
-
-export async function insertProduto(db: SQLiteDatabase, produto: Produto) {
-  // ...
-}
-
-export async function getAllProdutos(
-  database: SQLiteDatabase,
-): Promise<EstoqueItem[]> {
-  // ...
-}
-
-export async function deleteProduto(db: SQLiteDatabase, id: number) {
-  // ...
-}
-
-export async function reduceProdutoQuantidade(
-  db: SQLiteDatabase,
-  id: number,
-  quantidadeAReduzir: number,
-) {
-  // ...
-}
-```
-
-### Descrição:
-
-Este arquivo atua como a camada de serviço de dados da aplicação. Ele contém todas as funções necessárias para interagir com o banco de dados `expo-sqlite`, incluindo a criação da tabela, inserção, busca, deleção e atualização de produtos.
-
-### Responsabilidades:
-
-  * **Inicialização do Banco de Dados:** Contém a função `initializeDatabase` para criar a tabela de produtos.
-  * **Operações CRUD:** É responsável por todas as operações de Criar (`insertProduto`), Ler (`getAllProdutos`), Atualizar (`reduceProdutoQuantidade`) e Deletar (`deleteProduto`).
-  * **Abstração:** Abstrai a lógica de acesso ao banco de dados dos componentes da interface, tornando o código mais organizado e fácil de manter.
+A TelaDeRelatorio é responsável por consolidar os dados do estoque em um formato portátil (PDF) e facilitar sua distribuição. Ela abstrai a complexidade de buscar os dados, formatar o HTML, renderizar o PDF e interagir com as APIs de compartilhamento do dispositivo.
 
 ## Usando o Prettier
 
