@@ -7,7 +7,7 @@ import { getAllProdutos, EstoqueItem } from '../serviço/produtoServiço';
 import CustomButton from '../components/button/CustomButton';
 
 const createHtml = (products: EstoqueItem[]): string => {
-    // --- CORREÇÃO 2: Acessando a propriedade correta 'precoUnit' ---
+
     const totalValue = products.reduce((sum, product) => sum + (product.quantidade * product.precoUnit), 0);
   
     const productRows = products
