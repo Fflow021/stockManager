@@ -35,7 +35,7 @@ npx expo start
 No Android Studio selecione o seu dispositivo para emular e volte no terminal que tinha sido aberto com o `npx expo start` e use a opção `a`,
 para iniciar a aplicação no android emulado.
 
-## 1. App.tsx
+## 1\. App.tsx
 
 Este é o ponto de entrada principal do aplicativo.
 
@@ -62,13 +62,13 @@ export default function App() {
 
 ### Descrição:
 
-Este é o ponto de entrada principal da aplicação React Native. Ele configura a estrutura fundamental, envolvendo a navegação e o tema global da interface do usuário. A aplicação é encapsulada por dois componentes principais: o NavigationContainer do React Navigation para gerenciar a navegação entre as telas e o PaperProvider do React Native Paper para fornecer o contexto de tema e estilo para os componentes da UI. Dentro desses provedores, o AppNavigator é renderizado, o que define as rotas da aplicação.
+Este é o ponto de entrada principal da aplicação React Native. Ele configura a estrutura fundamental, envolvendo a navegação, o tema global da interface do usuário e o provedor do banco de dados. A aplicação é encapsulada pelo `SQLiteProvider` para disponibilizar o acesso ao banco de dados, o `NavigationContainer` para gerenciar a navegação entre as telas e o `PaperProvider` para fornecer o tema de Material Design aos componentes.
 
 ### Responsabilidades:
 
-O arquivo App.tsx é responsável por inicializar a aplicação, envolvendo-a no contexto de navegação do React Navigation e aplicando o tema de design Material Design a todos os componentes da interface. Ele atua como o root da aplicação, garantindo que os componentes de navegação e UI estejam disponíveis em toda a árvore de componentes.
+O arquivo App.tsx é responsável por inicializar a aplicação, configurando os provedores de contexto essenciais para o banco de dados, navegação e tema. Ele atua como a raiz da aplicação, garantindo que os componentes de navegação e UI, bem como a conexão com o banco de dados, estejam disponíveis em toda a árvore de componentes.
 
-## 2. AppNavigator.tsx
+## 2\. AppNavigator.tsx
 
 Este arquivo define o navegador principal do aplicativo, utilizando um createNativeStackNavigator para gerenciar as diferentes telas.
 
@@ -100,13 +100,13 @@ export default function AppNavigator() {
 
 ### Descrição:
 
-Este arquivo define a estrutura de navegação da aplicação utilizando createNativeStackNavigator do React Navigation. Ele cria uma pilha de telas que podem ser navegadas, cada uma associada a um nome de rota e um componente React. A tela inicial (HomeScreen) é configurada para não exibir o cabeçalho padrão, enquanto as outras telas (TelaDeCadastro, TelaDeEstoque, TelaDeRelatorio) usam o cabeçalho padrão da pilha de navegação.
+Este arquivo define a estrutura de navegação da aplicação utilizando `createNativeStackNavigator` do React Navigation. Ele cria uma pilha de telas que podem ser navegadas, cada uma associada a um nome de rota e um componente React. A tela inicial (`HomeScreen`) é configurada para não exibir o cabeçalho padrão, enquanto as outras telas (`TelaDeCadastro`, `TelaDeEstoque`, `TelaDeRelatorio`) usam o cabeçalho padrão da pilha de navegação.
 
 ### Responsabilidades:
 
 O AppNavigator.tsx é responsável por gerenciar as transições entre as diferentes telas da aplicação. Ele define quais telas estão disponíveis e como elas se relacionam na pilha de navegação, permitindo que o usuário se mova de uma tela para outra de forma intuitiva.
 
-## 3. HomeScreen.tsx
+## 3\. HomeScreen.tsx
 
 Esta tela é a tela inicial do aplicativo, apresentando botões para acessar as outras funcionalidades.
 
@@ -156,13 +156,13 @@ const styles = StyleSheet.create({
 
 ### Descrição:
 
-Este componente representa a tela inicial da aplicação. Ele é estruturado com um View principal que contém um cabeçalho personalizado (CustomHeader) e três botões (CustomButton). Cada botão navega para uma tela específica da aplicação (Cadastro, Estoque, Relatório) quando pressionado. Os estilos para o contêiner e para os botões são importados de arquivos de estilo separados.
+Este componente representa a tela inicial da aplicação. Ele é estruturado com um `View` principal que contém um cabeçalho personalizado (`CustomHeader`) e três botões (`CustomButton`). Cada botão navega para uma tela específica da aplicação (Cadastro, Estoque, Relatório) quando pressionado.
 
 ### Responsabilidades:
 
-A HomeScreen é responsável por fornecer ao usuário o ponto de partida e o acesso rápido às principais funcionalidades do sistema de gerenciamento de estoque, como o cadastro de itens, a visualização do estoque e a geração de relatórios. Ela atua como um hub central para as operações do aplicativo.
+A HomeScreen é responsável por fornecer ao usuário o ponto de partida e o acesso rápido às principais funcionalidades do sistema de gerenciamento de estoque. Ela atua como um hub central para as operações do aplicativo.
 
-## 4. TelaDeCadastro.tsx
+## 4\. TelaDeCadastro.tsx
 
 Esta tela representa a funcionalidade de cadastro de novos itens no estoque.
 
@@ -299,258 +299,54 @@ export default function TelaDeCadastro() {
     </View>
   );
 }
+//...
+```
+
+### Descrição:
+
+Este componente implementa a tela de cadastro de novos itens no estoque. Ele utiliza estados locais para gerenciar os valores dos campos de entrada de texto e inclui validações em tempo real para os campos de quantidade e preço. Ao pressionar "Salvar", os dados são validados e, se corretos, um novo produto é criado e inserido no banco de dados através da função `insertProduto` do serviço.
+
+### Responsabilidades:
+
+A `TelaDeCadastro` é responsável por coletar, validar e persistir as informações de um novo item no banco de dados do sistema. Ela garante a integridade dos dados inseridos pelo usuário antes de salvá-los e fornece feedback sobre o sucesso ou falha da operação.
+
+## 5\. TelaDeEstoque.tsx
+
+```typescript
+import { StyleSheet, ScrollView, Text, Alert, View } from 'react-native';
+import * as React from 'react';
+import {
+  DataTable,
+  Button,
+  Modal,
+  Portal,
+  TextInput,
+} from 'react-native-paper';
+import { useEffect, useState, useCallback } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import { useSQLiteContext } from 'expo-sqlite';
+import {
+  getAllProdutos,
+  deleteProduto,
+  reduceProdutoQuantidade,
+} from '../serviço/produtoServiço';
+
+// ...
+
+export default function TelaDeEstoque() {
+    // ...
+}
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  container: {
-    padding: 20,
-    paddingBottom: 100,
-  },
-  buttonContainer: {
-    marginTop: 24,
-  },
-  errorText: {
-    color: 'red',
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  footer: {
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-  },
+  // ...
 });
 ```
 
 ### Descrição:
 
-Este componente implementa a tela de cadastro de novos itens no estoque. Ele utiliza estados locais para gerenciar os valores dos campos de entrada de texto, como nome, quantidade, preço de compra, descrição e código do item. A tela inclui validações em tempo real para os campos de quantidade e preço, exibindo mensagens de erro se os dados inseridos não corresponderem ao formato esperado. Um botão "Salvar" permite submeter os dados, exibindo um alerta de sucesso ou erro. A tela é envolta por um ScrollView para garantir que o conteúdo seja rolado em dispositivos com telas menores e exibe um cabeçalho personalizado no rodapé.
+Este componente exibe uma tabela paginada (`DataTable`) com todos os itens do estoque, buscando os dados do banco de dados SQLite. A tela é forçada para a orientação de paisagem (`LANDSCAPE`) para melhor visualização da tabela. Na parte inferior, dois botões permitem ao usuário "Reduzir Quantidade" ou "Excluir Item", abrindo modais com formulários para inserir o ID do produto e a quantidade (se aplicável) para executar a ação desejada.
 
 ### Responsabilidades:
-
-A TelaDeCadastro é responsável por coletar as informações necessárias para registrar um novo item no sistema de estoque. Ela assegura que os dados inseridos pelo usuário sejam válidos antes de serem processados e salvos (atualmente logados no console), garantindo a integridade das informações do produto.
-
-## 5. TeladeEstoque.tsx
-
-```typescript
-import { StyleSheet, ScrollView, Text, Alert } from 'react-native';
-import * as React from 'react';
-import { DataTable } from 'react-native-paper';
-import { useEffect, useState } from 'react';
-import * as ScreenOrientation from 'expo-screen-orientation';
-
-// Importe o hook para acessar o banco de dados
-import { useSQLiteContext } from 'expo-sqlite';
-// Importe a função para buscar todos os produtos (AJUSTE ESTE CAMINHO!)
-import { getAllProdutos } from '../serviço/produtoServiço';
-
-// Defina a interface do item do seu estoque para tipagem correta.
-// Sua função getAllProdutos (em databaseService.ts) precisará mapear
-// 'preco_unidade' (do DB) para 'precoUnit' (nesta interface).
-interface EstoqueItem {
-  id: number;
-  nome: string;
-  quantidade: number;
-  precoUnit: number;
-  descricao: string;
-  codigo: string;
-}
-
-export default function TelaDeEstoque() {
-  const [page, setPage] = useState<number>(0);
-  const [numberOfItemsPerPageList] = useState([3, 5, 7, 9]);
-  const [itemsPerPage, onItemsPerPageChange] = useState(
-    numberOfItemsPerPageList[0],
-  );
-  // O estado 'items' agora será preenchido com dados do SQLite
-  const [items, setItems] = useState<EstoqueItem[]>([]);
-
-  // Obtenha a instância do banco de dados a partir do contexto do Expo SQLite
-  const db = useSQLiteContext();
-
-  // Efeito para forçar a orientação da tela para horizontal
-  useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-
-    // Função de limpeza para retornar à orientação vertical ao sair da tela
-    return () => {
-      ScreenOrientation.lockAsync(
-        ScreenOrientation.OrientationLock.PORTRAIT_UP,
-      );
-    };
-  }, []);
-
-  // Efeito para carregar os dados do banco de dados
-  useEffect(() => {
-    const loadItemsFromDatabase = async () => {
-      try {
-        // Busca os produtos do DB usando a função que você implementará
-        const loadedItems = await getAllProdutos(db);
-        setItems(loadedItems); // Atualiza o estado com os dados carregados
-      } catch (error) {
-        console.error('Falha ao carregar itens do banco de dados:', error);
-        Alert.alert('Erro', 'Não foi possível carregar os itens do estoque.');
-      }
-    };
-
-    // Só tenta carregar se a instância do banco de dados estiver disponível
-    if (db) {
-      loadItemsFromDatabase();
-    }
-  }, [db]); // Dependência 'db' garante que o carregamento aconteça quando o DB estiver pronto
-
-  // Lógica de paginação
-  const from = page * itemsPerPage;
-  const to = Math.min((page + 1) * itemsPerPage, items.length);
-
-  // Redefine a página para 0 quando o número de itens por página muda
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <DataTable>
-        <DataTable.Header style={styles.header}>
-          <DataTable.Title style={{ flex: 0.4 }} textStyle={styles.titleText}>
-            ID
-          </DataTable.Title>
-          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
-            Nome
-          </DataTable.Title>
-          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
-            Quantidade
-          </DataTable.Title>
-          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
-            Preço unitário
-          </DataTable.Title>
-          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
-            Descrição
-          </DataTable.Title>
-          <DataTable.Title style={{ flex: 1 }} textStyle={styles.titleText}>
-            Código
-          </DataTable.Title>
-        </DataTable.Header>
-
-        {/* Mapeia sobre os itens carregados do banco de dados */}
-        {items.slice(from, to).map((item) => (
-          <DataTable.Row key={item.id}>
-            <DataTable.Cell
-              style={{ flex: 0.4 }}
-              textStyle={styles.cellStyleText}
-            >
-              {item.id}
-            </DataTable.Cell>
-            <DataTable.Cell
-              style={{ flex: 1 }}
-              textStyle={styles.cellStyleText}
-            >
-              {item.nome}
-            </DataTable.Cell>
-            <DataTable.Cell
-              style={{ flex: 1 }}
-              textStyle={styles.cellStyleText}
-            >
-              {item.quantidade}
-            </DataTable.Cell>
-            <DataTable.Cell
-              style={{ flex: 1 }}
-              textStyle={styles.cellStyleText}
-            >
-              R${item.precoUnit.toFixed(2)}
-            </DataTable.Cell>
-            <DataTable.Cell
-              style={{ flex: 1 }}
-              textStyle={styles.cellStyleText}
-            >
-              {item.descricao}
-            </DataTable.Cell>
-            <DataTable.Cell
-              style={{ flex: 0.99 }}
-              textStyle={styles.cellStyleText}
-            >
-              {item.codigo}
-            </DataTable.Cell>
-          </DataTable.Row>
-        ))}
-
-        <DataTable.Pagination
-          page={page}
-          numberOfPages={Math.ceil(items.length / itemsPerPage)}
-          onPageChange={(page) => setPage(page)}
-          label={`${from + 1}-${to} de ${items.length}`}
-          numberOfItemsPerPageList={numberOfItemsPerPageList}
-          numberOfItemsPerPage={itemsPerPage}
-          onItemsPerPageChange={onItemsPerPageChange}
-          showFastPaginationControls
-          selectPageDropdownLabel={'Linhas por página'}
-        />
-      </DataTable>
-
-      {/* Mensagem exibida se não houver itens no estoque */}
-      {items.length === 0 && (
-        <Text
-          style={{
-            textAlign: 'center',
-            marginTop: 20,
-            fontSize: 16,
-            color: '#555',
-          }}
-        >
-          Nenhum item cadastrado no estoque.
-        </Text>
-      )}
-    </ScrollView>
-  );
-}
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  container: {
-    padding: 20,
-    paddingBottom: 100,
-  },
-  buttonContainer: {
-    marginTop: 24,
-  },
-  errorText: {
-    color: 'red',
-    marginTop: 4,
-    marginBottom: 8,
-  },
-  footer: {
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-  },
-  cellStyleText: {
-    flex: 6,
-    fontWeight: 'bold',
-    color: '#000000',
-  },
-  titleText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  header: {
-    alignItems: 'flex-start',
-    backgroundColor: '#502f5a',
-  },
-});
-```
-
-### Descrição
-
-Este componente exibe uma tabela de itens do estoque utilizando o componente DataTable do React Native Paper. Ele gerencia a paginação dos itens e força a orientação da tela para o modo paisagem (LANDSCAPE) ao ser montado, retornando à orientação retrato (PORTRAIT_UP) ao ser desmontado, o que é útil para exibir tabelas com muitas colunas. Os dados dos itens são fornecidos por um mock estático, e a tabela é renderizada dentro de um ScrollView para permitir a rolagem se houver muitos itens ou se a tela for menor.
-
-### Responsabilidades
 
 A TelaDeEstoque é responsável por apresentar uma visão organizada e paginada dos itens atualmente no estoque. Ela permite ao usuário visualizar rapidamente detalhes como nome, quantidade, preço unitário, descrição e código de cada item, facilitando o acompanhamento do inventário.
 
