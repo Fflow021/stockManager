@@ -1,6 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, ViewStyle, TextStyle } from 'react-native';
-import buttonStyles from '../../styles/CustomButtonStyle/ButtonStyle';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  GestureResponderEvent,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
+import buttonStyles from './CustomButtonStyle/ButtonStyle';
 
 interface CustomButtonProps {
   title: string;
@@ -24,7 +31,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       style={[
         styles.button,
         disabled && styles.disabled,
-        style, // estilo externo personalizado
+        style, 
       ]}
     >
       <Text style={[styles.text, textStyle]}>{title}</Text>
