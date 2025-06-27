@@ -1,4 +1,4 @@
-import Produto from '../produto';
+import Produto from '../produtoModel';
 
 describe('Produto', () => {
 
