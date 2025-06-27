@@ -4,17 +4,17 @@ Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenc
 
 ## Tecnologias Utilizadas
 
-- React 18.3.1
-- React-native 0.76.9
-- Expo 52.0.46
-- Roteamento: React Navigation
-- Estilos: React Native Paper
-- SQLite: Banco de dados local com `expo-sqlite`
-- Geração de PDF: `expo-print`
-- Compartilhamento: `expo-sharing`
-- Padronização e Qualidade: Prettier
-- Testes: Jest
-- Gemini AI: Documentação
+  - React 18.3.1
+  - React-native 0.76.9
+  - Expo 52.0.46
+  - Roteamento: React Navigation
+  - Estilos: React Native Paper
+  - SQLite: Banco de dados local com `expo-sqlite`
+  - Geração de PDF: `expo-print`
+  - Compartilhamento: `expo-sharing`
+  - Padronização e Qualidade: Prettier
+  - Testes: Jest
+  - Gemini AI: Documentação
 
 ## Instalação e execução do projeto
 
@@ -44,12 +44,22 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
 import { PaperProvider } from 'react-native-paper';
-import { SQLiteProvider } from 'expo-sqlite';
+import { SQLiteProvider, type SQLiteDatabase } from 'expo-sqlite';
 import { initializeDatabase } from './src/serviço/produtoServiço';
 
 export default function App() {
+  console.log('[DEBUG] Componente App renderizando.');
+
+  const handleDbError = (error: Error) => {
+    console.error('[DEBUG] Erro no SQLiteProvider:', error);
+  };
+
   return (
-    <SQLiteProvider databaseName="produtos_db" onInit={initializeDatabase}>
+    <SQLiteProvider
+      databaseName="produtos_db"
+      onInit={initializeDatabase}
+      onError={handleDbError}
+    >
       <NavigationContainer>
         <PaperProvider>
           <AppNavigator />
@@ -350,7 +360,7 @@ Este componente exibe uma tabela paginada (`DataTable`) com todos os itens do es
 
 A TelaDeEstoque é responsável por apresentar uma visão organizada e paginada dos itens atualmente no estoque. Ela permite ao usuário visualizar rapidamente detalhes como nome, quantidade, preço unitário, descrição e código de cada item, facilitando o acompanhamento do inventário.
 
-## 6. TeladeRelatório.tsx
+## 6\. TeladeRelatorio.tsx
 
 Esta tela busca os dados do estoque e gera um relatório em formato PDF que pode ser compartilhado.
 
