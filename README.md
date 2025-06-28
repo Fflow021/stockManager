@@ -1,7 +1,9 @@
-# Gerenciador de Estoque Eita Sorvete Açaí Lanches
+# Gerenciador de estoque Eita Sorvete Açaí Lanches
 
 Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenciador de Estoque Eita Sorvete Açaí Lanches", desenvolvido utilizando React Native. O aplicativo tem como objetivo facilitar o gerenciamento de estoque da empresa, oferecendo funcionalidades para cadastro de itens, visualização do estoque atual e geração de relatórios.
 
+## Documentação de desenvolvimento
+[Link](https://docs.google.com/document/d/1-dAGI4G4hh33RI26qURtmecVdvUuyr99JQViElgQzxs/edit?usp=sharing)
 ## Tecnologias Utilizadas
 
   - React 18.3.1
@@ -17,7 +19,6 @@ Esta documentação descreve a estrutura e o funcionamento do aplicativo "Gerenc
   - Gemini AI: Documentação
 
 ## Instalação e execução do projeto
-
 ### Instalar as dependências
 
 ```bash
